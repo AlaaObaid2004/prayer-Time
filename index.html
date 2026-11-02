@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مواقيت الصلاة - الرياض</title>
+  <style>
+    
+    * { 
+      
+      box-sizing: border-box; 
+    }
+
+    body {
+      background: url(background.jpg) center center/cover;
+    }
+    #city-name{
+      margin-top: 50px;
+      font-size: 100px;
+      color: white;
+    }
+    h1,h2,h3,h4,h5,h6{
+      margin: 0px;
+    }
+    .card{
+      width: 12%;
+      height: 85%;
+      background-color: white;
+      font-size: 20px;
+      box-shadow: 0px 10px 5px rgb( 0 0 0 /30%);
+
+    }
+    .header{
+      background: linear-gradient( 45deg , #5709ee , #7a37bf);
+      color: white;
+    }
+    .header h1{
+      font-weight: 400;
+      padding: 5px;
+    }
+    .center{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .time{
+      font-size: 70px;
+    }
+    select option{
+      background-color:black;
+      color: white;
+    }
+    
+  </style>
+</head>
+<body style="direction: rtl;">
+  <div >
+    
+    <div style="margin-top: 100px;">
+      <!-- city name  -->
+       <div style="margin-right: 40px;">
+        <h1 id="city-name" style="font-weight: 400"> غزة </h1>
+        <h6 style=" color: white; font-size: 40px ;" id="date"> الجمعة 21 اغسطس </h6>
+
+       </div>
+       <!-- // city name // -->
+        <hr style="margin: 0px 50px;">
+
+
+        <!-- prayer timing  -->
+         <div class="cards center" style="height: 300px; margin-top:80px; justify-content: space-around;">
+           <!-- Card -->
+          <div class="card">
+            <div class="header">
+              <h1>الفجر </h1>
+            </div>
+            <div class="body center" style="height: 80%;">
+              <div class="time"  id="fajer-time"> 00:00 </div>
+            </div>
+          </div>
+          <!--  //Card // -->
+            <!-- Card -->
+          <div class="card">
+            <div class="header">
+              <h1>الشروق </h1>
+            </div>
+            <div class="body center" style="height: 80%;">
+              <div class="time" id="sunrise-time"> 00:00 </div>
+            </div>
+          </div>
+          <!--  //Card // -->
+            <!-- Card -->
+          <div class="card">
+            <div class="header">
+              <h1>الظهر  </h1>
+            </div>
+            <div class="body center" style="height: 80%;">
+              <div class="time" id="dhur-time"> 00:00</div>
+            </div>
+          </div>
+          <!--  //Card // -->
+            <!-- Card -->
+          <div class="card">
+            <div class="header">
+              <h1>العصر </h1>
+            </div>
+            <div class="body center" style="height: 80%;">
+              <div class="time" id="asr-time"> 00:00 </div>
+            </div>
+          </div>
+          <!--  //Card // -->
+            <!-- Card -->
+          <div class="card">
+            <div class="header">
+              <h1>المغرب </h1>
+            </div>
+            <div class="body center" style="height: 80%;">
+              <div class="time" id="sunset-time"> 00:00 </div>
+            </div>
+          </div>
+          <!--  //Card // -->
+            <!-- Card -->
+          <div class="card">
+            <div class="header">
+              <h1>العشاء </h1>
+            </div>
+            <div class="body center" style="height: 80%;">
+              <div class="time" id="isha-time"> 4:30 </div>
+            </div>
+          </div>
+          <!--  //Card // -->
+          
+         </div>
+        <!-- // prayer timing  // -->
+         
+        <!-- change city select  -->
+         <div class="center" style="margin-top: 120px;">
+          <select name="" id="cities-select" style="width: 250px; height: 35px; font-size: 20px; background: none; color: white; padding: 5px; border-radius: 20px; ">
+
+          </select>
+         </div>
+        <!--// change city select//  -->
+
+    </div>
+
+  </div>
+  <script src="node_modules/axios/dist/axios.min.js"> </script>
+</body>
+<script>
+
+let cities = [
+{
+  arabicName: "الخليل",
+  name: "Al Khalīl"
+},
+{
+  arabicName: "القدس",
+  name: "Al Quds"
+},
+{
+  arabicName: "بيت لحم",
+  name: "Bethlehem"
+}
+  
+]
+for( let city of cities ){
+  const content = ` <option> ${city.arabicName}</option>`
+  document.getElementById("cities-select").innerHTML += content
+}
+document.getElementById("cities-select").addEventListener("change",function(){
+  let cityName = ""
+  for( let city of cities){
+    if(city.arabicName == this.value){
+      cityName = city.name
+    }
+  }
+  getPrayersTimingsOfCity(cityName)
+// if(this.value == "الخليل"){
+//    getPrayersTimingsOfCity("Al Khalīl")
+// }else if(this.value == ("القدس")){
+//   getPrayersTimingsOfCity("Al Quds")
+//  }else if(this.value == ("بيت لحم")){
+ //   getPrayersTimingsOfCity("GBayt Laḩm")
+//  }
+} )
+
+function getPrayersTimingsOfCity(cityName){
+
+  let params = {
+    country: "PS",
+    city: cityName  
+  }
+  axios
+  .get("https://api.aladhan.com/v1/timingsByCity", {
+    params : params 
+  })
+  .then((response) => {
+    const timings = response.data.data.timings
+    document.getElementById("fajer-time").innerHTML= timings.Fajr
+    document.getElementById("sunrise-time").innerHTML= timings.Sunrise
+    document.getElementById("dhur-time").innerHTML= timings.Dhuhr
+    document.getElementById("asr-time").innerHTML= timings.Asr
+    document.getElementById("sunset-time").innerHTML= timings.Sunset
+    document.getElementById("isha-time").innerHTML= timings.Isha
+    console.log(response.data.data.timings)
+
+    const readableDate = response.data.data.date.readable ;
+    const weekDay = response.data.data.date.hijri.weekday.ar ;
+    const date =  weekDay + "" + readableDate    
+     document.getElementById("date").innerHTML= date
+    console.log( readableDate + "" + weekDay);
+  })
+  .catch((error) => {
+    console.error(error);
+  })
+}
+
+ getPrayersTimingsOfCity("Bethlehem");
+  
+  
+</script>
+
+</html>
